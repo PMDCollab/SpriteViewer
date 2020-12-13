@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+<head>
+	<link rel="stylesheet" href="webassets/styles.css">
+	<title>The PMD Portrait Repository</title>
+	
+	<link rel="icon" 
+      type="image/png" 
+      href="webassets/favicon.png" />
+	  
+	<meta charset="utf-8"/>
+	<meta name="description" content="The PMD Portrait Repository archives the great art of many artist making portraits based on Pokemon Mystery Dungeon"/>
+	<meta name="author" content="u/TheDasK" />
+	<meta name="robots" content="index,nofollow" />
+	
+	<script
+		src="https://code.jquery.com/jquery-3.3.1.js"
+		integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+		crossorigin="anonymous">
+	</script>
+	<script type="text/javascript" src="webassets/scripts.js"></script>
+</head>
+<body>
+	<div id="header"></div>
+
+	<div id="container">
+	</div>
+
+	<div id="footer"></div>
+
+	<script>
+		$(function(){
+			$("#header").load("webassets/header.html"); 
+			$("#footer").load("webassets/footer.html"); 
+		});
+
+		let notofficial = document.getElementById("container");
+		
+		let id = findGetParameter("id");
+		if (!(id)) id = false;
+
+		populatePortraits(id);
+	</script>
+</body>
+</html>
