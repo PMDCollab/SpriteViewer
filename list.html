@@ -13,47 +13,117 @@
 	<meta name="author" content="u/TheDasK" />
 	<meta name="robots" content="index,nofollow" />
 	
-	<script
-		src="https://code.jquery.com/jquery-3.3.1.js"
-		integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-		crossorigin="anonymous">
-	</script>
 	<script type="text/javascript" src="webassets/scripts.js"></script>
 
 </head>
 <body>
-	<div id="header"></div>
+	<div class="topnav" id="top">
+		<a href="index.html#home">Home</a>
+		<div class="dropdown">
+			<button class="dropbtn">Generations</button>
+			<div class="dropdown-content">
+				<a href="list.html?filled=true&incomplete=true&gen=1">Gen 1</a>
+				<a href="list.html?filled=true&incomplete=true&gen=2">Gen 2</a>
+				<a href="list.html?filled=true&incomplete=true&gen=3">Gen 3</a>
+				<a href="list.html?filled=true&incomplete=true&gen=4">Gen 4</a>
+				<a href="list.html?filled=true&incomplete=true&gen=5">Gen 5</a>
+				<a href="list.html?filled=true&incomplete=true&gen=6">Gen 6</a>
+				<a href="list.html?filled=true&incomplete=true&gen=7">Gen 7</a>
+				<a href="list.html?filled=true&incomplete=true&gen=8">Gen 8</a>
+			</div>
+		</div>
+		<a href="list.html?filled=true&incomplete=true">All (slow)</a>
+		<a href="list.html?filled=true">Completed</a>
+		<a href="list.html?missing=true">Missing</a>
+		<a href="contributors.html">Contributors</a>
+	</div>
+
+	<div id=wait class="list-filter">
+		<p>LOADING</p>
+	</div>
 	
-	<table class="list-table">
-		<thead>
-			<tr>
-				<th>Pkdex #</th>
-				<th></th>
-				<th>Name</th>
-				<th>Status</th>
-				<th>Portrait</th>
-			</tr>
-		</thead>
-		<tbody id="main"></tbody>
-	</table>
+	<div id="list-container">
+		<div class="list-filter">
+			<input type="checkbox" name="official"> Include Spike Chunsoft<br>
+			<input type="checkbox" name="filled"> Fully Fetured<br>
+			<input type="checkbox" name="incomplete"> Existing or Incomplete<br>
+			<input type="checkbox" name="missing"> Missing<br>
+			<select name="gens" id="list-genselect">
+				<option value="0">All Gens</option>
+				<option value="1">Gen 1</option>
+				<option value="2">Gen 2</option>
+				<option value="3">Gen 3</option>
+				<option value="4">Gen 4</option>
+				<option value="5">Gen 5</option>
+				<option value="6">Gen 6</option>
+				<option value="7">Gen 7</option>
+				<option value="8">Gen 8</option>
+			</select><br>
+			<input type="button" onclick="prepareForTable()" value="Filter">
+		</div>
+
+		<table class="list-table">
+			<thead>
+				<tr>
+					<th>Pkdex #</th>
+					<th></th>
+					<th>Name</th>
+					<th>Status</th>
+					<th>Portrait</th>
+				</tr>
+			</thead>
+			<tbody id="main"></tbody>
+		</table>
+	</div>
 	
-	<div id="footer"></div>
+	<div class="footer">
+		<a href="#header">⬆️TOP<a>
+	</div>
 
 	<script>
-		$(function(){
-			$("#header").load("webassets/header.html"); 
-			$("#footer").load("webassets/footer.html"); 
-		});
+
+		async function prepareForTable(){
+
+			waitMsg.style.display = "inherit";
+
+			tableBody.innerHTML = "";
+
+			let gen = document.getElementById("list-genselect").value;
+			let official = document.getElementsByName("official")[0].checked;
+			let filled = document.getElementsByName("filled")[0].checked;
+			let incomplete = document.getElementsByName("incomplete")[0].checked;
+			let missing = document.getElementsByName("missing")[0].checked;
+
+			await populateListTable(tableBody,creator,gen,official,filled,incomplete,missing);
+
+			waitMsg.style.display = "none";
+		}
 		
 		let gen = findGetParameter("gen");
 		if (gen < 0 || gen > 8) gen = 0;
 		if (!(gen)) gen = 0;
-		let notofficial = findGetParameter("notofficial");
+		document.getElementById("list-genselect").value = gen;
+		let official = findGetParameter("official");
+		if (official == null) official = true;
 		let filled = findGetParameter("filled");
-		let tableBody = document.getElementById("main");
+		if (filled == null) filled = false;
+		let incomplete = findGetParameter("incomplete");
+		if (incomplete == null) incomplete = false;
+		let missing = findGetParameter("missing");
+		if (missing == null) missing = false;
+		let creator = findGetParameter("contributor");
 
-		populateListTable(tableBody,gen,notofficial,filled);
+		document.getElementsByName("official")[0].checked = official ? true : false;
+		document.getElementsByName("filled")[0].checked = filled ? true: false;
+		document.getElementsByName("incomplete")[0].checked = incomplete ? true: false;
+		document.getElementsByName("missing")[0].checked = missing ? true : false;
 		
+		let tableBody = document.getElementById("main");
+		let waitMsg = document.getElementById("wait");
+
+		populateListTable(tableBody,creator,gen,official,filled,incomplete,missing);
+		
+		waitMsg.style.display = "none";
 	</script>
 </body>
 </html>

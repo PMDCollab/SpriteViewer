@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="webassets/styles.css">
+	<title>The PMD Portrait Repository</title>
+	
+	<link rel="icon" 
+      type="image/png" 
+      href="webassets/favicon.png" />
+	  
+	<meta charset="utf-8"/>
+	<meta name="description" content="The PMD Portrait Repository archives the great art of many artist making portraits based on Pokemon Mystery Dungeon"/>
+	<meta name="author" content="u/TheDasK" />
+	<meta name="robots" content="index,nofollow" />
+	
+	<script type="text/javascript" src="webassets/scripts.js"></script>
+
+</head>
+<body>
+    <div class="topnav" id="top">
+        <a href="index.html#home">Home</a>
+        <div class="dropdown">
+            <button class="dropbtn">Generations</button>
+            <div class="dropdown-content">
+                <a href="list.html?filled=true&incomplete=true&gen=1">Gen 1</a>
+                <a href="list.html?filled=true&incomplete=true&gen=2">Gen 2</a>
+                <a href="list.html?filled=true&incomplete=true&gen=3">Gen 3</a>
+                <a href="list.html?filled=true&incomplete=true&gen=4">Gen 4</a>
+                <a href="list.html?filled=true&incomplete=true&gen=5">Gen 5</a>
+                <a href="list.html?filled=true&incomplete=true&gen=6">Gen 6</a>
+                <a href="list.html?filled=true&incomplete=true&gen=7">Gen 7</a>
+                <a href="list.html?filled=true&incomplete=true&gen=8">Gen 8</a>
+            </div>
+        </div>
+        <a href="list.html?filled=true&incomplete=true">All (slow)</a>
+        <a href="list.html?filled=true">Completed</a>
+        <a href="list.html?missing=true">Missing</a>
+        <a href="contributors.html">Contributors</a>
+    </div>
+
+    <table class="list-table">
+		<thead>
+			<tr>
+				<th>User</th>
+				<th>Contact</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody id="main"></tbody>
+	</table>
+
+	<div class="footer">
+        <a href="#header">⬆️TOP<a>
+    </div>
+
+	<script>
+
+        async function fillCredits(){
+            let credits = await loadCredits();
+
+            for (artist in credits) {
+
+                //this is a hack to remove "anonymous" that doesnt have anything registered to them. In the rewrite I will fix all that and give proper credits
+                if (["<@!187019163452047360>","<@!496039052370509824>","<@!183561486893842432>","<@!493293282064072715>","<@!200318546750865418>","<@!91001329228464128>","<@!195280695009083392>","<@!288402314253959169>"].includes(credits[artist][1])) continue;
+                
+                let row = tableBody.insertRow();
+
+                if (credits[artist][0] == "") {
+                    let cell = row.insertCell(-1);
+                    cell.innerHTML = "Anonymous";
+                    row.insertCell(-1);
+                    cell = row.insertCell(-1);
+                    cell.innerHTML = "<a href=list.html?filled=true&incomplete=true&contributor="+credits[artist][1].replace(">","&gt;")+">Show all work!</a>"
+                } else {
+                    let cell = row.insertCell(-1);
+                    cell.innerHTML = credits[artist][0];
+                    cell = row.insertCell(-1);
+                    
+                    if (credits[artist][2].substr(0,4) == "http"){
+                        cell.innerHTML = "<a href="+credits[artist][2]+">"+credits[artist][2]+"</a>";
+                    } else if (credits[artist][2].substr(0,1) == "@") {
+                        cell.innerHTML = "<a href="+credits[artist][2]+">"+credits[artist][2]+"</a>";
+                    } else if (credits[artist][2].substr(0,3) == "/u/"){
+                        cell.innerHTML = "<a href=http://reddit.com"+credits[artist][2]+">"+credits[artist][0]+"</a>";
+                    } else if (credits[artist][2].includes("@")) {
+                        cell.innerHTML = "<a href=mailto:"+credits[artist][2]+">"+credits[artist][2]+"</a>";
+                    } else if (credits[artist][2].includes("#")) {
+                        cell.innerHTML = credits[artist][0] + " Discord ID: " + credits[artist][2] + "";
+                    }
+
+                    cell = row.insertCell(-1);
+                    cell.innerHTML = "<a href=list.html?filled=true&incomplete=true&contributor="+credits[artist][1].replace(">","&gt;")+">Show all work!</a>"
+                }
+            }
+        }
+
+        let tableBody = document.getElementById("main");
+
+        fillCredits();
+	</script>
+</body>
+</html>

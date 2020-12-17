@@ -13,20 +13,28 @@
 	<meta name="author" content="u/TheDasK" />
 	<meta name="robots" content="index,nofollow" />
 	  
-	<script
-		src="https://code.jquery.com/jquery-3.3.1.js"
-		integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-		crossorigin="anonymous">
-	</script>
-	<script>
-		$(function(){
-			$("#header").load("webassets/header.html"); 
-			$("#footer").load("webassets/footer.html"); 
-		});
-	</script>
 </head>
 <body>
-	<div id="header"></div>
+	<div class="topnav" id="top">
+		<a href="index.html#home">Home</a>
+		<div class="dropdown">
+			<button class="dropbtn">Generations</button>
+			<div class="dropdown-content">
+				<a href="list.html?filled=true&incomplete=true&gen=1">Gen 1</a>
+				<a href="list.html?filled=true&incomplete=true&gen=2">Gen 2</a>
+				<a href="list.html?filled=true&incomplete=true&gen=3">Gen 3</a>
+				<a href="list.html?filled=true&incomplete=true&gen=4">Gen 4</a>
+				<a href="list.html?filled=true&incomplete=true&gen=5">Gen 5</a>
+				<a href="list.html?filled=true&incomplete=true&gen=6">Gen 6</a>
+				<a href="list.html?filled=true&incomplete=true&gen=7">Gen 7</a>
+				<a href="list.html?filled=true&incomplete=true&gen=8">Gen 8</a>
+			</div>
+		</div>
+		<a href="list.html?filled=true&incomplete=true">All (slow)</a>
+		<a href="list.html?filled=true">Completed</a>
+		<a href="list.html?missing=true">Missing</a>
+		<a href="contributors.html">Contributors</a>
+	</div>
 
 	<div class="title">
 		<h1>The PMD Portrait Repository</h1>
@@ -59,6 +67,5 @@
 	</div>
 	<p hidden class="disclaimer">SkyTemple is in NO WAY affiliated with Nintendo, The Pokémon Company, Spike Chunsoft or any of their affiliates. This is an unofficial fan project.</p>
 	
-	<div id="footer"></div>
 </body>
 </html>

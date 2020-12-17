@@ -24,6 +24,7 @@ async function loadCredits(){
     text = text.split("\n");
     text.shift(); //remove the table titles
     for (i in text){
+        if (text[i] == "") continue;
         let entry = text[i].split("\t");
         credits[entry[1]] = entry;
     }
@@ -40,9 +41,19 @@ async function parseCredits(credit){
         if (!author) {
             aElement = "unknown";
         } else if (!author[0]) { //I dont know what to do with these authors that has a discord ID but no names
-            aElement = "unknown ("+author[1]+")";
-        } else{
-            aElement = "<a href="+author[2]+">"+author[0]+"</a>";
+            aElement = "Discord ID: "+ author[1];
+        } else {
+            if (author[2].substr(0,4) == "http"){
+                aElement = "<a href="+author[2]+">"+author[0]+"</a>";
+            } else if (author[2].substr(0,1) == "@") {
+                aElement = "<a href="+author[2]+">"+author[0]+"</a>";
+            } else if (author[2].substr(0,3) == "/u/"){
+                aElement = "<a href=http://reddit.com"+author[2]+">"+author[0]+"</a>";
+            } else if (author[2].includes("@")) {
+                aElement = "<a href=mailto:"+author[2]+">"+author[0]+"</a>";
+            } else if (author[2].includes("#")) {
+                aElement = author[0] + " (Discord ID: " + author[2] + ")";
+            }
         }
 
         return aElement;
@@ -107,9 +118,9 @@ function fetchImage(context,cell,id,path,expresion,reverse,row,col){
     if(expresion){
         if (reverse) expresion += "^", row += 8;
         img.src = sourcePath + "portrait/" + id + path + expresion +".png";
-        $(img).on('load', function() {
+        img.onload = function() {
             context.drawImage(img,40*col,40*row/2);
-        });
+        };
     } else {
         img.src = "webassets/empty.png";
     }
@@ -206,7 +217,7 @@ function createTable(id, pjson ,path){
     return div;
 }
 
-async function populateListTable(tablebody, gen, notofficial, filled){
+async function populateListTable(tablebody,creator,gen,official,filled,incomplete,missing){
 		
     let gens = [["0001","0898"],
                 ["0001","0151"],
@@ -223,9 +234,12 @@ async function populateListTable(tablebody, gen, notofficial, filled){
     for (const entry in tracker){
     
         if (entry < gens[gen][0] || entry > gens[gen][1]) continue;
-        if (!(tracker[entry]["portrait_credit"])) continue;
-        if (notofficial && tracker[entry]["portrait_credit"] == "CHUNSOFT") continue;
-        if (filled && tracker[entry]["portrait_complete"] != 2) continue;
+        if (!missing && tracker[entry]["portrait_files"].length == 0) continue;
+        if (!official && tracker[entry]["portrait_credit"] == "CHUNSOFT") continue;
+        if (!filled && tracker[entry]["portrait_complete"] == 2) continue;
+        if (!incomplete && tracker[entry]["portrait_complete"] == 1) continue;
+        if (!incomplete && (tracker[entry]["portrait_files"].length != 0) && tracker[entry]["portrait_complete"] == 0) continue;
+        if (creator && tracker[entry]["portrait_credit"] != creator) continue;
     
         let row = tablebody.insertRow();
         
@@ -233,22 +247,34 @@ async function populateListTable(tablebody, gen, notofficial, filled){
         pkdex.innerHTML = entry;
         
         let portrait = row.insertCell(1);
-        portrait.innerHTML = "<img src=\"https://raw.githubusercontent.com/PMDCollab/SpriteCollab/master/portrait/"+entry+"/Normal.png\"></img>"
         
         let name = row.insertCell(2);
         name.innerHTML = tracker[entry]["name"];
         
         let status = row.insertCell(3);
-        stn = tracker[entry]["portrait_complete"]
-        if (stn == 0 || stn == 1){st = "Exists"}else{st = "Fully Featured"}
+        let st, stn;
+        if (tracker[entry]["portrait_complete"] == 2) {
+            st = "Fully Featured";
+            stn = 2;
+        } else if(tracker[entry]["portrait_files"].length == 0){
+            st = "Missing";
+            stn = 0;
+        } else {
+            st = "Exists";
+            stn = 1;
+        }
         status.innerHTML = st;
         status.attributes = "class=\"status-"+stn+"\""
         
         let link = row.insertCell(4);
-        link.innerHTML = "<a href=\"portrait.html?id="+entry+"\">Portrait</a>";
-        
+        if (stn != 0){
+            portrait.innerHTML = "<img src=\"https://raw.githubusercontent.com/PMDCollab/SpriteCollab/master/portrait/"+entry+"/Normal.png\"></img>"
+            link.innerHTML = "<a href=\"portrait.html?id="+entry+"\">Portrait</a>";
+        } else {
+            portrait.innerHTML = "<img src=\"webassets/empty.png\"></img>"
+            link.innerHTML = "";
+        }
     }
-    
 }
 
 async function populatePortraits(id){
