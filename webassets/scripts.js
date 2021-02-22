@@ -219,7 +219,7 @@ function createTable(id, pjson ,path){
 
 async function populateListTable(tablebody,creator,gen,official,filled,incomplete,missing){
 		
-    let gens = [["0001","0898"],
+    let gens = [["0000","0898"],
                 ["0001","0151"],
                 ["0152","0251"],
                 ["0252","0386"],
