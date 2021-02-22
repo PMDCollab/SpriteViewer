@@ -3,19 +3,19 @@
 
 name: Python application
 
-#on:
-#  schedule:
-#    - cron: '0 0 * * *' #runs at 00:00 UTC everyday
+on:
+  schedule:
+    - cron: '0 30 8 1/1 * ? *' #runs at 00:00 UTC everyday
 
-on: 
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'     
-        required: true
-        default: 'warning'
-      tags:
-        description: 'Test scenario tags'  
+# on: 
+#   workflow_dispatch:
+#     inputs:
+#       logLevel:
+#         description: 'Log level'     
+#         required: true
+#         default: 'warning'
+#       tags:
+#         description: 'Test scenario tags'  
 
 jobs:
   build:
