@@ -80,14 +80,14 @@ function entriesUnfolding(entry,path = "/"){ //I dont even know, dont read this,
     return entries;
 }
 
-function parseExpresions(pjson){
+function parseExpresions(pjson){ // quick fix for the bot update, kinda dumb but works
 
     let existing = pjson["portrait_files"];
     let portraits = [], portraitsr = [], result = [];
 
     for (i in expresionNames){
 
-        if (existing.includes(expresionNames[i]+".png")){
+        if (expresionNames[i] in existing){
             portraits.push(expresionNames[i]);
         }else{
             portraits.push(false);
@@ -96,7 +96,7 @@ function parseExpresions(pjson){
 
     for (i in expresionNames){
 
-        if (existing.includes(expresionNames[i]+"^.png")){
+        if (expresionNames[i]+ "^" in existing){
             portraitsr.push(expresionNames[i]);
         }else{
             portraitsr.push(false);
@@ -220,7 +220,7 @@ function createTable(id, pjson ,path){
 async function populateListTable(tablebody,creator,gen,official,filled,incomplete,missing){
 		
     let gens = [["0000","0898"],
-                ["0001","0151"],
+                ["0000","0151"],
                 ["0152","0251"],
                 ["0252","0386"],
                 ["0387","0493"],
