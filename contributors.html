@@ -83,7 +83,7 @@
                     } else if (credits[artist][2].substr(0,3) == "/u/"){
                         cell.innerHTML = "<a href=http://reddit.com"+credits[artist][2]+">"+credits[artist][0]+"</a>";
                     } else if (credits[artist][2].includes("@")) {
-                        cell.innerHTML = "<a href=mailto:"+credits[artist][2]+">"+credits[artist][2]+"</a>";
+                        cell.innerHTML = "<a href=mailto:"+encodeURI(credits[artist][2])+">"+credits[artist][2]+"</a>";
                     } else if (credits[artist][2].includes("#")) {
                         cell.innerHTML = credits[artist][0] + " Discord ID: " + credits[artist][2] + "";
                     }

@@ -43,16 +43,17 @@ async function parseCredits(credit){
         } else if (!author[0]) { //I dont know what to do with these authors that has a discord ID but no names
             aElement = "Discord ID: "+ author[1];
         } else {
+            aElement = author[0];
             if (author[2].substr(0,4) == "http"){
-                aElement = "<a href="+author[2]+">"+author[0]+"</a>";
+                aElement = "<a href="+author[2]+">"+aElement+"</a>";
             } else if (author[2].substr(0,1) == "@") {
-                aElement = "<a href="+author[2]+">"+author[0]+"</a>";
+                aElement = "<a href="+author[2]+">"+aElement+"</a>";
             } else if (author[2].substr(0,3) == "/u/"){
-                aElement = "<a href=http://reddit.com"+author[2]+">"+author[0]+"</a>";
+                aElement = "<a href=http://reddit.com"+author[2]+">"+aElement+"</a>";
             } else if (author[2].includes("@")) {
-                aElement = "<a href=mailto:"+author[2]+">"+author[0]+"</a>";
+                aElement = "<a href=mailto:"+encodeURI(author[2])+">"+aElement+"</a>";
             } else if (author[2].includes("#")) {
-                aElement = author[0] + " (Discord ID: " + author[2] + ")";
+                aElement += " (Discord ID: " + author[2] + ")";
             }
         }
 
