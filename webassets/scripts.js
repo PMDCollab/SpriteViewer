@@ -32,31 +32,68 @@ async function loadCredits(){
     return credits;
 }
 
-async function parseCredits(credit){
+// Create an anchor (<a>) HTML element with text and an optional hyperlink
+function createAnchor(text, href) {
+    let anchor = document.createElement("a");
+    anchor.appendChild(document.createTextNode(text));
+    if (href) {
+        anchor.setAttribute("href", href);
+    }
+    return anchor;
+}
 
-        let creditsList = await loadCredits();
-        let author = creditsList[credit];
-        let aElement;
+// Create an italicized HTML text node
+function createItalicized(text) {
+    let italics = document.createElement("i");
+    italics.appendChild(document.createTextNode(text));
+    return italics;
+}
 
-        if (!author) {
-            aElement = "unknown";
-        } else if (!author[0]) { //I dont know what to do with these authors that has a discord ID but no names
-            aElement = "Discord ID: "+ author[1];
-        } else {
-            if (author[2].substr(0,4) == "http"){
-                aElement = "<a href="+author[2]+">"+author[0]+"</a>";
-            } else if (author[2].substr(0,1) == "@") {
-                aElement = "<a href="+author[2]+">"+author[0]+"</a>";
-            } else if (author[2].substr(0,3) == "/u/"){
-                aElement = "<a href=http://reddit.com"+author[2]+">"+author[0]+"</a>";
-            } else if (author[2].includes("@")) {
-                aElement = "<a href=mailto:"+author[2]+">"+author[0]+"</a>";
-            } else if (author[2].includes("#")) {
-                aElement = author[0] + " (Discord ID: " + author[2] + ")";
+// Take artist info as an array of [name, Discord ID, contact] and return
+// an formated HTML element to be rendered in a document. Optionally specify
+// whether to display raw links in place of names when applicable. Also
+// optionally specify whether the name should be used as fallback if the
+// artist's info doesn't match any predetermined formats. Otherwise, return null.
+function artistContactInfo(artist, displayRawLink, defaultToName) {
+    try {
+        let [name, discordID, contact] = artist;
+        // Convert from undefined to ""
+        name ||= "";
+        discordID ||= "";
+        contact ||= "";
+
+        if (!name) {
+            return document.createTextNode("Discord ID: " + discordID);
+        } else if (contact.toLowerCase().startsWith("http") ||
+                   contact.toLowerCase().startsWith("@")) {
+            let text = displayRawLink ? contact : name;
+            return createAnchor(text, contact);
+        } else if (contact.toLowerCase().startsWith("/u/") ||
+                   contact.toLowerCase().startsWith("u/")) {
+            if (!contact.startsWith("/")) {
+                contact = "/" + contact;
             }
+            let uri = "https://www.reddit.com" + contact;
+            let text = displayRawLink ? uri : name;
+            return createAnchor(text, uri);
+        } else if (contact.includes("@")) {
+            let text = displayRawLink ? contact : name;
+            return createAnchor(text, "mailto:" + contact);
+        } else if (contact.includes("#")) {
+            return document.createTextNode(name + " (Discord ID: " + contact + ")");
         }
+        return defaultToName ? document.createTextNode(name) : null;
+    } catch {
+        return null;
+    }
+}
 
-        return aElement;
+async function parseCredits(credit){
+    let creditsList = await loadCredits();
+    return (
+        artistContactInfo(creditsList[credit], false, true) ||
+        cell.appendChild(createItalicized("Unknown"))
+    );
 }
 
 function entriesUnfolding(entry,path = "/"){ //I dont even know, dont read this, you dont deserve the migraine
@@ -142,7 +179,7 @@ function createTable(id, pjson ,path){
     let div = document.createElement("div");
 
     let title = document.createElement("h2");       //title
-    title.innerHTML = pjson.name
+    title.appendChild(document.createTextNode(pjson.name));
     title.setAttribute("class", "port-title");
     div.appendChild(title);
 
@@ -181,7 +218,7 @@ function createTable(id, pjson ,path){
             cell = rowpic.insertCell(col);
             fetchImage(context,cell,id,path,expname,false,row,col)
             cell = rowtext.insertCell(col);
-            cell.innerHTML = expresionNames[i];
+            cell.appendChild(document.createTextNode(expresionNames[i]));
 
             if (expresions[1]) {
 
@@ -190,7 +227,7 @@ function createTable(id, pjson ,path){
                 cell = rowpicr.insertCell(col);
                 fetchImage(context,cell,id,path,expname,true,row,col)
                 cell = rowtextr.insertCell(col);
-                cell.innerHTML = expresionNames[i];
+                cell.appendChild(document.createTextNode(expresionNames[i]));
             }
         }
     
@@ -204,7 +241,10 @@ function createTable(id, pjson ,path){
     let credcell = table.insertRow(-1).insertCell(0);
     credcell.setAttribute("class", "port-credit");
     credcell.setAttribute("colspan", "5");
-    parseCredits(pjson.portrait_credit).then(cred=>credcell.innerHTML = "Credits: " + cred);
+    parseCredits(pjson.portrait_credit).then(cred => {
+        credcell.appendChild(document.createTextNode("Credits: "));
+        credcell.appendChild(cred);
+    });
     div.appendChild(table);
     
     let donwload = document.createElement("div");
@@ -244,12 +284,12 @@ async function populateListTable(tablebody,creator,gen,official,filled,incomplet
         let row = tablebody.insertRow();
         
         let pkdex = row.insertCell(0);
-        pkdex.innerHTML = entry;
+        pkdex.appendChild(document.createTextNode(entry));
         
         let portrait = row.insertCell(1);
         
         let name = row.insertCell(2);
-        name.innerHTML = tracker[entry]["name"];
+        name.appendChild(document.createTextNode(tracker[entry]["name"]));
         
         let status = row.insertCell(3);
         let st, stn;
@@ -263,17 +303,19 @@ async function populateListTable(tablebody,creator,gen,official,filled,incomplet
             st = "Exists";
             stn = 1;
         }
-        status.innerHTML = st;
+        status.appendChild(document.createTextNode(st));
         status.attributes = "class=\"status-"+stn+"\""
         
         let link = row.insertCell(4);
+        let imgSrc = "webassets/empty.png";
         if (stn != 0){
-            portrait.innerHTML = "<img src=\"https://raw.githubusercontent.com/PMDCollab/SpriteCollab/master/portrait/"+entry+"/Normal.png\"></img>"
-            link.innerHTML = "<a href=\"portrait.html?id="+entry+"\">Portrait</a>";
-        } else {
-            portrait.innerHTML = "<img src=\"webassets/empty.png\"></img>"
-            link.innerHTML = "";
+            imgSrc = "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/master/portrait/" +
+                entry + "/Normal.png";
+            link.appendChild(createAnchor("Portrait", "portrait.html?id=" + entry));
         }
+        let img = document.createElement("img");
+        img.setAttribute("src", imgSrc);
+        portrait.appendChild(img);
     }
 }
 

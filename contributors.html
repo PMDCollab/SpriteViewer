@@ -54,43 +54,33 @@
     </div>
 
 	<script>
-
         async function fillCredits(){
             let credits = await loadCredits();
 
             for (artist in credits) {
-
-                //this is a hack to remove "anonymous" that doesnt have anything registered to them. In the rewrite I will fix all that and give proper credits
-                if (["<@!187019163452047360>","<@!496039052370509824>","<@!183561486893842432>","<@!493293282064072715>","<@!200318546750865418>","<@!91001329228464128>","<@!195280695009083392>","<@!288402314253959169>"].includes(credits[artist][1])) continue;
+                let [name, discordID] = credits[artist];
                 
+                // User
                 let row = tableBody.insertRow();
-
-                if (credits[artist][0] == "") {
-                    let cell = row.insertCell(-1);
-                    cell.innerHTML = "Anonymous";
-                    row.insertCell(-1);
-                    cell = row.insertCell(-1);
-                    cell.innerHTML = "<a href=list.html?filled=true&incomplete=true&contributor="+credits[artist][1].replace(">","&gt;")+">Show all work!</a>"
+                let cell = row.insertCell();
+                if (name) {
+                    cell.appendChild(document.createTextNode(name));
                 } else {
-                    let cell = row.insertCell(-1);
-                    cell.innerHTML = credits[artist][0];
-                    cell = row.insertCell(-1);
-                    
-                    if (credits[artist][2].substr(0,4) == "http"){
-                        cell.innerHTML = "<a href="+credits[artist][2]+">"+credits[artist][2]+"</a>";
-                    } else if (credits[artist][2].substr(0,1) == "@") {
-                        cell.innerHTML = "<a href="+credits[artist][2]+">"+credits[artist][2]+"</a>";
-                    } else if (credits[artist][2].substr(0,3) == "/u/"){
-                        cell.innerHTML = "<a href=http://reddit.com"+credits[artist][2]+">"+credits[artist][0]+"</a>";
-                    } else if (credits[artist][2].includes("@")) {
-                        cell.innerHTML = "<a href=mailto:"+credits[artist][2]+">"+credits[artist][2]+"</a>";
-                    } else if (credits[artist][2].includes("#")) {
-                        cell.innerHTML = credits[artist][0] + " Discord ID: " + credits[artist][2] + "";
-                    }
-
-                    cell = row.insertCell(-1);
-                    cell.innerHTML = "<a href=list.html?filled=true&incomplete=true&contributor="+credits[artist][1].replace(">","&gt;")+">Show all work!</a>"
+                    cell.appendChild(createItalicized("Anonymous"));
                 }
+
+                // Contact info
+                cell = row.insertCell();
+                let contactInfo = artistContactInfo(credits[artist], true, false);
+                if (contactInfo) {
+                    cell.appendChild(contactInfo);
+                }
+
+                // "Show all work!" column
+                cell = row.insertCell();
+                cell.appendChild(createAnchor("Show all work!",
+                    "list.html?filled=true&incomplete=true&contributor=" + discordID,
+                ));
             }
         }
 
