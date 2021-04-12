@@ -1,10 +1,9 @@
 body {
     background-color: #707070;
-	background: url("back.png") no-repeat fixed center;
+	background: url("back.png") no-repeat fixed center/cover;
     color: #FFFFFF;
     font-family: 'Verdana', Helvetica, Arial, sans-serif;
     font-weight: 300;
-    overflow-x: hidden;
 	padding: 50px 0px 0px;
 }
 
@@ -12,6 +11,7 @@ a {
 	color: #68D068;
 }
 
+/* Main page header */
 h1 {
 	text-align: center;
 	font-size:60px;
@@ -23,7 +23,10 @@ h1 {
 	border-width: 8px 12px;
 	border-color: #68D068;
 	border-radius: 10px;
-	margin: 5px 30% 0px;
+	margin: 5px auto 0px;
+	max-width: 40%;
+	min-width: 400px;	/* Takes priority over max-width */
+    padding: 10px;
 }
 
 h2, h3 {
