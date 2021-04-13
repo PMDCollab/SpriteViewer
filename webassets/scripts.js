@@ -57,10 +57,10 @@ function createItalicized(text) {
 function artistContactInfo(artist, displayRawLink, defaultToName) {
     try {
         let [name, discordID, contact] = artist;
-        // Convert from undefined to ""
-        name ||= "";
-        discordID ||= "";
-        contact ||= "";
+        // Convert from undefined to "" (note: `||=` is unsupported on some mobile browsers)
+        name = name || "";
+        discordID = discordID || "";
+        contact = contact || "";
 
         if (!name) {
             return document.createTextNode("Discord ID: " + discordID);
