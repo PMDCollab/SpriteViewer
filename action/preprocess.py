@@ -14,8 +14,8 @@ from io import BytesIO
 
 URL = 'https://raw.githubusercontent.com/PMDCollab/SpriteCollab/master/'
 
-EXPLIST = ["Normal.png","Happy.png","Pain.png","Angry.png","Worried.png","Sad.png","Crying.png","Shouting.png","Teary-Eyed.png","Determined.png","Joyous.png","Inspired.png","Surprised.png","Dizzy.png","Special0.png","Special1.png","Sigh.png","Stunned.png","Special2.png","Special3.png"]
-EXPREVLIST = ["Normal^.png","Happy^.png","Pain^.png","Angry^.png","Worried^.png","Sad^.png","Crying^.png","Shouting^.png","Teary-Eyed^.png","Determined^.png","Joyous^.png","Inspired^.png","Surprised^.png","Dizzy^.png","Special0^.png","Special1^.png","Sigh^.png","Stunned^.png","Special2^.png","Special3^.png"]
+EXPLIST = ["Normal","Happy","Pain","Angry","Worried","Sad","Crying","Shouting","Teary-Eyed","Determined","Joyous","Inspired","Surprised","Dizzy","Special0","Special1","Sigh","Stunned","Special2","Special3"]
+EXPREVLIST = ["Normal^","Happy^","Pain^","Angry^","Worried^","Sad^","Crying^","Shouting^","Teary-Eyed^","Determined^","Joyous^","Inspired^","Surprised^","Dizzy^","Special0^","Special1^","Sigh^","Stunned^","Special2^","Special3^"]
 
 #Download the json file that contains the all the poke entries
 def loadTrackerFile():
@@ -170,7 +170,7 @@ def newForm(formEntry, formEntryName, formEntrybotPath, formId, creditsNames):
     
     expressions = formEntry["portrait_files"]
 
-    for exp in EXPLIST:
+    for exp in EXPLIST: #ok, this is dumb, but made more sense in the past with a different tracker
         if exp in expressions:
             pForm['portraits'].append(1)
         else:
@@ -219,7 +219,7 @@ def generatePortrait(portraits,preversed,botPath,filename):
     x,y = 0,0
     for i in range(20):
         if portraits[i]:
-            compilation.paste(retrivePortrait(URL + "portrait" + botPath + EXPLIST[i]), (x,y))
+            compilation.paste(retrivePortrait(URL + "portrait" + botPath + EXPLIST[i] + ".png"), (x,y))
             
         x += 40
         if x == 200:
@@ -228,7 +228,7 @@ def generatePortrait(portraits,preversed,botPath,filename):
     if preversed:
         for i in range(20):
             if preversed[i]:
-                compilation.paste(retrivePortrait(URL + "portrait" + botPath + EXPREVLIST[i]), (x,y))
+                compilation.paste(retrivePortrait(URL + "portrait" + botPath + EXPREVLIST[i] + ".png"), (x,y))
             
             x += 40
             if x == 200:
