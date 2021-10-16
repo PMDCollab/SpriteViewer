@@ -100,7 +100,7 @@ function entriesUnfolding(entry,path = "/"){ //I dont even know, dont read this,
 
     let entries = [];
     
-    if (entry.name && entry.portrait_credit){
+    if (entry.name && entry.portrait_credit.primary){
         let nentry = Object.assign({}, entry);
         nentry.path = path;
         delete nentry.subgroups;
@@ -241,7 +241,7 @@ function createTable(id, pjson ,path){
     let credcell = table.insertRow(-1).insertCell(0);
     credcell.setAttribute("class", "port-credit");
     credcell.setAttribute("colspan", "5");
-    parseCredits(pjson.portrait_credit).then(cred => {
+    parseCredits(pjson.portrait_credit.primary).then(cred => {
         credcell.appendChild(document.createTextNode("Credits: "));
         credcell.appendChild(cred);
     });
@@ -275,11 +275,11 @@ async function populateListTable(tablebody,creator,gen,official,filled,incomplet
     
         if (entry < gens[gen][0] || entry > gens[gen][1]) continue;
         if (!missing && tracker[entry]["portrait_files"].length == 0) continue;
-        if (!official && tracker[entry]["portrait_credit"] == "CHUNSOFT") continue;
+        if (!official && tracker[entry]["portrait_credit"]["primary"] == "CHUNSOFT") continue;
         if (!filled && tracker[entry]["portrait_complete"] == 2) continue;
         if (!incomplete && tracker[entry]["portrait_complete"] == 1) continue;
         if (!incomplete && (tracker[entry]["portrait_files"].length != 0) && tracker[entry]["portrait_complete"] == 0) continue;
-        if (creator && tracker[entry]["portrait_credit"] != creator) continue;
+        if (creator && tracker[entry]["portrait_credit"]["primary"] != creator) continue;
     
         let row = tablebody.insertRow();
         
