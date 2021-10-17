@@ -90,10 +90,15 @@ function artistContactInfo(artist, displayRawLink, defaultToName) {
 
 async function parseCredits(credit){
     let creditsList = await loadCredits();
-    return (
-        artistContactInfo(creditsList[credit], false, true) ||
+    primary = (
+        artistContactInfo(creditsList[credit.primary], false, true) ||
         cell.appendChild(createItalicized("Unknown"))
     );
+	secondary = (
+        artistContactInfo(creditsList[credit.secondary[1]], false, true) || artistContactInfo(creditsList[credit.secondary[0]], false, true) ||
+        cell.appendChild(createItalicized("Unknown"))
+    );
+	return [primary, secondary]
 }
 
 function entriesUnfolding(entry,path = "/"){ //I dont even know, dont read this, you dont deserve the migraine
@@ -241,18 +246,24 @@ function createTable(id, pjson ,path){
     let credcell = table.insertRow(-1).insertCell(0);
     credcell.setAttribute("class", "port-credit");
     credcell.setAttribute("colspan", "5");
-    parseCredits(pjson.portrait_credit.primary).then(cred => {
-        credcell.appendChild(document.createTextNode("Credits: "));
-        credcell.appendChild(cred);
+    credcell.appendChild(document.createTextNode("Credits: "));
+    let credsubcell = table.insertRow(-1).insertCell(0);
+    credsubcell.setAttribute("class", "port-credit");
+    credsubcell.setAttribute("colspan", "5");
+    parseCredits(pjson.portrait_credit).then(cred => {
+        credsubcell.appendChild(document.createTextNode("Primary: "));
+        credsubcell.appendChild(cred[0]);
+        credsubcell.appendChild(document.createTextNode(" | Latest: "));
+        credsubcell.appendChild(cred[1]);
     });
     div.appendChild(table);
     
-    let donwload = document.createElement("div");
-    donwload.innerHTML = "<p>Download!</p>"
-    donwload.setAttribute("onclick", "downloadCanvas(this)");
-    donwload.setAttribute("class", "port-button");
-    donwload.setAttribute("hidden", "true");
-    div.appendChild(donwload);
+    let download = document.createElement("div");
+    download.innerHTML = "<p>Download!</p>"
+    download.setAttribute("onclick", "downloadCanvas(this)");
+    download.setAttribute("class", "port-button");
+    download.setAttribute("hidden", "true");
+    div.appendChild(download);
 
     return div;
 }
